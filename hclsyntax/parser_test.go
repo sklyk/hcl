@@ -4,16 +4,10 @@ import (
 	"reflect"
 	"testing"
 
-	// "github.com/go-test/deep"
 	"github.com/google/go-cmp/cmp"
-	// "github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 )
-
-// func init() {
-// 	deep.MaxDepth = 999
-// }
 
 func TestParseConfig(t *testing.T) {
 	tests := []struct {
@@ -1571,7 +1565,7 @@ block "valid" {}
 			},
 		},
 		{
-			"a = <<-EOT\n Hjello\nEOT\nb = \"Hi\"",
+			"a = <<-EOT\n Hello\nEOT\nb = \"Hi\"",
 			0,
 			&Body{
 				Attributes: Attributes{
@@ -2318,6 +2312,9 @@ block "valid" {}
 					"a": {
 						Name: "a",
 						Expr: &LiteralValueExpr{
+							// TODO KEM
+							// ends up with a cty.Val here with a null cty.Type{}, which is not valid
+							// should be the unknown type
 							SrcRange: hcl.Range{
 								Start: hcl.Pos{Line: 1, Column: 5, Byte: 4},
 								End:   hcl.Pos{Line: 1, Column: 6, Byte: 5},
@@ -2560,11 +2557,6 @@ block "valid" {}
 
 			got := file.Body
 
-			// if diff := deep.Equal(got, test.want); diff != nil {
-			// 	for _, problem := range diff {
-			// 		t.Errorf(problem)
-			// 	}
-			// }
 			if diff := cmp.Diff(got, test.want, cmp.Exporter(func(reflect.Type) bool { return true })); diff != "" {
 				t.Errorf(diff)
 			}
@@ -2832,11 +2824,6 @@ func TestParseConfigDiagnostics(t *testing.T) {
 			t.Logf("\n%s", test.input)
 			_, diags := ParseConfig([]byte(test.input), "test.hcl", hcl.InitialPos)
 
-			// if diff := deep.Equal(diags, test.want); diff != nil {
-			// 	for _, problem := range diff {
-			// 		t.Errorf(problem)
-			// 	}
-			// }
 			if diff := cmp.Diff(diags, test.want); diff != "" {
 				t.Errorf(diff)
 			}
