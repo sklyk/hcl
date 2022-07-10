@@ -58,6 +58,8 @@ func Decode(filename string, src []byte, ctx *hcl.EvalContext, target interface{
 	var diags hcl.Diagnostics
 
 	switch suffix := strings.ToLower(filepath.Ext(filename)); suffix {
+	case ".conf":
+		fallthrough
 	case ".hcl":
 		file, diags = hclsyntax.ParseConfig(src, filename, hcl.Pos{Line: 1, Column: 1})
 	case ".json":
